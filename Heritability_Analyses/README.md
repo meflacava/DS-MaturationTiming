@@ -1,5 +1,5 @@
 
-### Heritability Analyses
+# Heritability Analyses
 
 
 This README file contains a description of the files and scripts used to estimate the heritability of age at maturity over a 10 year spawning period in a Delta smelt hatchery.
