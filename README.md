@@ -4,7 +4,7 @@ Repo for Delta smelt maturation timing project
 
 ## Description of files:
 
-DS_MatTime_Analyses.R = code for the majority of analyses and figures for this paper (see separate folder for heredity analyses)
+DS_MatTime_Analyses.R = code for the majority of analyses and figures for this paper (see separate folder for heritability analyses)
 
 GenotypedFish.csv = list of all fish tagged in each spawn year, and accompanying metadata
 
