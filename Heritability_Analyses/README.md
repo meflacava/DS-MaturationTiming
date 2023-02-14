@@ -1,11 +1,6 @@
----
-title: "Heritability Analyses"
-author: "Joanna Griffiths"
-date: "2023-02-14"
-output:
-  html_document: default
-  pdf_document: default
----
+
+### Heritability Analyses
+
 
 This README file contains a description of the files and scripts used to estimate the heritability of age at maturity over a 10 year spawning period in a Delta smelt hatchery.
 
