@@ -2,7 +2,9 @@
 title: "Heritability Analyses"
 author: "Joanna Griffiths"
 date: "2023-02-14"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 This README file contains a description of the files and scripts used to estimate the heritability of age at maturity over a 10 year spawning period in a Delta smelt hatchery.
@@ -21,16 +23,3 @@ Once the model has completed its run, import the output from maturation_glmmMCMC
 This script will compare the model outpruts from the two runs to make sure they converge and the correct model parameters have been chosen. The script will then also calculate phenotypic variation, genotypic variation, and heritability from the model results. Finally, the script provides code to graph the results for each year using the input file: heritability_Vp_results_combined_nitt500thousand_fixedtemp.txt
 
 
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
