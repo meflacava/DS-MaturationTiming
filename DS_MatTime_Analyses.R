@@ -11,11 +11,12 @@ display.brewer.all()
 #Color gradient generator: https://colordesigner.io/gradient-generator
 
 ##DI color gradient
-blues <- brewer.pal(6,"Blues")[-c(1,2)]
+#blues <- brewer.pal(6,"Blues")[-c(1,2)]
 #DI 1-3 = "#9ECAE1"   
 #DI 3-5 = "#6BAED6"
 #DI 5-7 = "#3182BD"
 #DI 7-10 = "#08519C"
+blues <- c("#80afce","#5383ae","#2c598e","#08306b")
 barplot(1:4,col=blues)
 
 ##Year color gradient (from https://colordesigner.io/gradient-generator)
@@ -389,7 +390,7 @@ summary(lm(TimeToRecovery~JulDayBorn*Domestication_Index,data=gen.reg))$coeffici
 
 
 #### Age at maturity ~ day born (regression for each DI bin) ####
-#regular season only, all years combined (manuscript figure 4)
+#regular season only, all years combined (manuscript figure 3)
 
 plot(TimeToRecovery ~ JulDayBorn, data=gen.reg,pch=16,col="darkgray",xaxt="n",
      xlab="Julian birthday",ylab="Age at maturity (weeks)")
@@ -410,7 +411,7 @@ legend("topright",legend=c("DI 1-3","DI 3-5","DI 5-7","DI 7-10","52 weeks"),col=
 
 ##### Number of ripe females ~ spawn week (by year) ####
 
-#manuscript figure 5
+#manuscript figure 4
 plot(density(ripe.reg$JulWeekRipe[ripe.reg$YearChecked==2010],adjust=1.5),
      xlim=c(1,29),ylim=c(0,0.15),col=oranges[1],
      main="",xlab="Julian week ripe",ylab="Density of ripe females",lwd=4)
@@ -475,7 +476,7 @@ summary(lm(Recovery_WithMorts~JulWeekTagged+Domestication_Index,data=ped.reg[ped
 #regular season only
 #2011-2020 parents only
 
-#manuscript figure 3
+#manuscript figure 5b
 par(mar=c(5.1,4.1,1,6)) #c(bottom, left, top, right)
 plot(Recovery_WithMorts~jitter(JulWeekTagged),data=ped.reg[ped.reg$YearSpawned %in% 2011:2020 & ped.reg$Recovery_WithMorts<80,],
      pch=16,col="gray",xaxt="n",
@@ -494,6 +495,74 @@ legend("right",inset=c(-0.3,0),title="DI group",legend=sort(unique(ped.reg$DIbin
        col=blues,lty=1,lwd=4,cex=0.8,ncol=1)
 par(mar=c(5.1,4.1,4.1,2.1),xpd=F) #c(bottom, left, top, right)
 
+
+
+#### Fitness ~ age at maturity + DI (years combined) ####
+#Regular season fish only (since we're looking at DI/selection, so remove plasticity associated with temp regime)
+#2011-2020 parents only (exclud 2009 with no week tagged info and 2010 because their offspring
+# were tagged regardless of sexual maturity in 2011)
+
+#Choose best model
+AIC(lm(Recovery_WithMorts~TimeToRecovery,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,])) #24465.06
+AIC(lm(Recovery_WithMorts~Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,])) #27447.74
+AIC(lm(Recovery_WithMorts~TimeToRecovery+Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,])) #24321.19
+AIC(lm(Recovery_WithMorts~TimeToRecovery*Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,])) #24320.38 lowest AIC
+
+summary(lm(Recovery_WithMorts~TimeToRecovery*Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,]))
+#Offspring recovered = 0.11(age at maturity) + 3.21(DI) - 0.04(age at maturity*DI) - 0.74
+x<-summary(lm(Recovery_WithMorts~TimeToRecovery*Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,]))$fstatistic
+pf(x[1],x[2],x[3],lower.tail=F) #4.145694e-32
+# Call:
+#   lm(formula = Recovery_WithMorts ~ TimeToRecovery * Domestication_Index,
+#      data = ped.reg[ped.reg$YearSpawned %in% 2011:2020, ])
+#
+# Residuals:
+#   Min      1Q  Median      3Q     Max
+# -15.193  -6.934  -2.523   4.057 104.051
+#
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)
+# (Intercept)                        -0.73761    6.30641  -0.117  0.90690
+# TimeToRecovery                      0.10931    0.13287   0.823  0.41075
+# Domestication_Index                 3.21437    1.18493   2.713  0.00671 **
+#   TimeToRecovery:Domestication_Index -0.04157    0.02481  -1.675  0.09394 .
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#
+# Residual standard error: 10.22 on 3244 degrees of freedom
+# (452 observations deleted due to missingness)
+# Multiple R-squared:  0.04491,    Adjusted R-squared:  0.04403
+# F-statistic: 50.85 on 3 and 3244 DF,  p-value: < 2.2e-16
+summary(lm(Recovery_WithMorts~TimeToRecovery*Domestication_Index,data=ped.reg[ped.reg$YearSpawned %in% 2011:2020,]))$coefficients
+#                                      Estimate Std. Error    t value    Pr(>|t|)
+#(Intercept)                        -0.73760858 6.30640615 -0.1169618 0.906897569
+#TimeToRecovery                      0.10930778 0.13286836  0.8226773 0.410752007
+#Domestication_Index                 3.21437006 1.18493025  2.7127082 0.006708814
+#TimeToRecovery:Domestication_Index -0.04156638 0.02480889 -1.6754632 0.093939767
+
+
+
+
+#### Fitness ~ age at maturity (by DI bin) ####
+#regular season only
+#2011-2020 parents only
+
+#manuscript figure 5a
+par(mar=c(5.1,4.1,1,6)) #c(bottom, left, top, right)
+plot(Recovery_WithMorts~jitter(TimeToRecovery),data=ped.reg[ped.reg$YearSpawned %in% 2011:2020 & ped.reg$Recovery_WithMorts<80,],
+     pch=16,col="gray",
+     xlab="Age at maturity (weeks)",
+     ylab="Number of offspring surviving to maturity")
+c<-1
+for (i in sort(unique(ped.reg$DIbin))){
+  abline(lm(Recovery_WithMorts~TimeToRecovery,data=ped.reg[ped.reg$DIbin==i & ped.reg$YearSpawned %in% 2011:2020,]),
+         col=blues[c],lwd=4)
+  c<-c+1
+}
+par(xpd=T)
+legend("right",inset=c(-0.3,0),title="Parent DI",legend=sort(unique(ped.reg$DIbin)),
+       col=blues,lty=1,lwd=4,cex=0.8,ncol=1)
+par(mar=c(5.1,4.1,4.1,2.1),xpd=F) #c(bottom, left, top, right)
 
 
 
